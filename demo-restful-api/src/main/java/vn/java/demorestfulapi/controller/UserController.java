@@ -1,5 +1,7 @@
 package vn.java.demorestfulapi.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.web.bind.annotation.*;
 import vn.java.demorestfulapi.dto.UserRequestDTO;
 
@@ -11,7 +13,7 @@ public class UserController {
 
     @PostMapping(value = "/")
 //    @RequestMapping(path = "/", method = RequestMethod.POST, headers = "apiKey=v1.0")
-    public String addUser(@RequestBody UserRequestDTO userDTO) {
+    public String addUser(@Valid @RequestBody UserRequestDTO userDTO) {
         return "Add user";
     }
 
@@ -22,7 +24,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public String changeStatus(@PathVariable int userId, @RequestParam(required = false) boolean status) {
+    public String changeStatus(@Min(value = 1, message = "userId must be greater than 0") @PathVariable int userId, @RequestParam(required = false) boolean status) {
         System.out.println("Change status user with id: " + userId);
         return "Change status user";
     }
