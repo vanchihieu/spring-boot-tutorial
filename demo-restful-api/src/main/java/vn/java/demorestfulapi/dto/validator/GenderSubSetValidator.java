@@ -1,7 +1,8 @@
-package vn.java.demorestfulapi.util;
+package vn.java.demorestfulapi.dto.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import vn.java.demorestfulapi.util.Gender;
 
 
 import java.util.Arrays;

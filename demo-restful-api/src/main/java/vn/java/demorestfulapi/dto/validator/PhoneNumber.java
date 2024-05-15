@@ -1,4 +1,4 @@
-package vn.java.demorestfulapi.util;
+package vn.java.demorestfulapi.dto.validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

@@ -1,8 +1,12 @@
-package vn.java.demorestfulapi.dto;
+package vn.java.demorestfulapi.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import vn.java.demorestfulapi.dto.validator.EnumPattern;
+import vn.java.demorestfulapi.dto.validator.EnumValue;
+import vn.java.demorestfulapi.dto.validator.GenderSubset;
+import vn.java.demorestfulapi.dto.validator.PhoneNumber;
 import vn.java.demorestfulapi.util.*;
 
 import java.io.Serializable;

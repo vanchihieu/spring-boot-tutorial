@@ -1,8 +1,7 @@
-package vn.java.demorestfulapi.util;
+package vn.java.demorestfulapi.dto.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import vn.java.demorestfulapi.util.EnumPattern;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
