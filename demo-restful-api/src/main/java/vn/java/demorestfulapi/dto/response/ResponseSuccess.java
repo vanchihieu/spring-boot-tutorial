@@ -1,5 +1,6 @@
 package vn.java.demorestfulapi.dto.response;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ public class ResponseSuccess extends ResponseEntity<ResponseSuccess.Payload> {
         super(body, headers, statusCode);
     }
 
+    @Getter
     public static class Payload {
         private final int status;
         private final String message;
@@ -48,16 +50,6 @@ public class ResponseSuccess extends ResponseEntity<ResponseSuccess.Payload> {
             this.data = data;
         }
 
-        public int getStatus() {
-            return status;
-        }
 
-        public String getMessage() {
-            return message;
-        }
-
-        public Object getData() {
-            return data;
-        }
     }
 }

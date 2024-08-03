@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import vn.java.demorestfulapi.configuration.Translator;
 import vn.java.demorestfulapi.dto.request.UserRequestDTO;
 import vn.java.demorestfulapi.dto.response.ResponseData;
 import vn.java.demorestfulapi.dto.response.ResponseSuccess;
@@ -42,28 +43,28 @@ public class UserController {
     public ResponseData<Integer> addUser(@Valid @RequestBody UserRequestDTO userDTO) {
         System.out.println("request add user " + userDTO.getFirstName());
 //        return new ResponseSuccess(HttpStatus.CREATED, "Add user success", userDTO);
-        return new ResponseData<>(HttpStatus.CREATED.value(), "Add user success", 1);
+        return new ResponseData<>(HttpStatus.CREATED.value(), Translator.toLocale("user.add.success"), 1);
     }
 
 
     @PutMapping("/{userId}")
     public ResponseData<?> updateUser(@PathVariable int userId, @Valid @RequestBody UserRequestDTO userDTO) {
         System.out.println("Update user with id: " + userId);
-        return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Update user success");
+        return new ResponseData<>(HttpStatus.ACCEPTED.value(), Translator.toLocale("user.upd.success"));
 //        return new ResponseSuccess(HttpStatus.ACCEPTED, "Update user success");
     }
 
     @PatchMapping("/{userId}")
     public ResponseData<Integer> changeStatus(@Min(value = 1, message = "userId must be greater than 0") @PathVariable int userId, @RequestParam(required = false) boolean status) {
         System.out.println("Change status user with id: " + userId);
-        return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Change status user success", userId);
+        return new ResponseData<>(HttpStatus.ACCEPTED.value(), Translator.toLocale("user.change.success"), userId);
 //        return new ResponseSuccess(HttpStatus.ACCEPTED, "Change status user success");
     }
 
     @DeleteMapping("/{userId}")
     public ResponseSuccess deleteUser(@PathVariable int userId) {
         System.out.println("Delete user with id: " + userId);
-        return new ResponseSuccess(HttpStatus.NO_CONTENT, "Delete user success");
+        return new ResponseSuccess(HttpStatus.NO_CONTENT, Translator.toLocale("user.del.success"));
     }
 
     @GetMapping("/{userId}")
