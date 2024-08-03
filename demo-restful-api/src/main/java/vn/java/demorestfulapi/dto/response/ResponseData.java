@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class ResponseData<T> {
     private final int status;
     private final String message;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonInclude(JsonInclude.Include.NON_NULL) // Giá trị null sẽ không được trả về
     private T data;
 
     /**

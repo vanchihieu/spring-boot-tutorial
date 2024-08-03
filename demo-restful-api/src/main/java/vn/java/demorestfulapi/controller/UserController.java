@@ -23,30 +23,31 @@ public class UserController {
 
 
     //    @RequestMapping(path = "/", method = RequestMethod.POST, headers = "apiKey=v1.0")
-    @Operation(summary = "Add user", description = "Add new user", responses = {
-            @ApiResponse(responseCode = "201", description = "Add user success",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            examples = @ExampleObject(name = "ex name", summary = "ex summary",
-                                    value = """
-                                              {
-                                                   "status": 201,
-                                                     "message": "Add user success",
-                                                      "data": 1
-                                              }
-                                            """
-                            )
-                    )),
-            @ApiResponse(responseCode = "400", description = "Bad request")
-    })
+//    @Operation(summary = "Add user", description = "Add new user", responses = {
+//            @ApiResponse(responseCode = "201", description = "Add user success",
+//                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+//                            examples = @ExampleObject(name = "ex name", summary = "ex summary",
+//                                    value = """
+//                                              {
+//                                                   "status": 201,
+//                                                     "message": "Add user success",
+//                                                      "data": 1
+//                                              }
+//                                            """
+//                            )
+//                    )),
+//            @ApiResponse(responseCode = "400", description = "Bad request")
+//    })
     @PostMapping(value = "/")
-    public ResponseSuccess addUser(@Valid @RequestBody UserRequestDTO userDTO) {
+    public ResponseData<Integer> addUser(@Valid @RequestBody UserRequestDTO userDTO) {
         System.out.println("request add user " + userDTO.getFirstName());
-        return new ResponseSuccess(HttpStatus.CREATED, "Add user success", userDTO);
+//        return new ResponseSuccess(HttpStatus.CREATED, "Add user success", userDTO);
+        return new ResponseData<>(HttpStatus.CREATED.value(), "Add user success", 1);
     }
 
 
     @PutMapping("/{userId}")
-    public ResponseData<?> updateUser(@PathVariable int userId, @RequestBody UserRequestDTO userDTO) {
+    public ResponseData<?> updateUser(@PathVariable int userId, @Valid @RequestBody UserRequestDTO userDTO) {
         System.out.println("Update user with id: " + userId);
         return new ResponseData<>(HttpStatus.ACCEPTED.value(), "Update user success");
 //        return new ResponseSuccess(HttpStatus.ACCEPTED, "Update user success");
@@ -79,9 +80,8 @@ public class UserController {
 
     @GetMapping("/list")
     public ResponseData<List<UserRequestDTO>> getAllUser(
-            @RequestParam(required = false) String email,
-            @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize) {
+            @RequestParam(defaultValue = "0", required = false) int pageNo,
+            @Min(10) @RequestParam(defaultValue = "20", required = false) int pageSize) {
         System.out.println("Get all user");
 
         return new ResponseData<>(HttpStatus.OK.value(), "Get all user success",
