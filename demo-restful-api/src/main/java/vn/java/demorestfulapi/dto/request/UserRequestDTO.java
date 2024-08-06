@@ -1,56 +1,50 @@
 package vn.java.demorestfulapi.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import vn.java.demorestfulapi.dto.validator.EnumPattern;
 import vn.java.demorestfulapi.dto.validator.EnumValue;
 import vn.java.demorestfulapi.dto.validator.GenderSubset;
 import vn.java.demorestfulapi.dto.validator.PhoneNumber;
-import vn.java.demorestfulapi.util.*;
+import vn.java.demorestfulapi.util.Gender;
+import vn.java.demorestfulapi.util.UserStatus;
+import vn.java.demorestfulapi.util.UserType;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
+import static vn.java.demorestfulapi.util.Gender.*;
+
 @Getter
-@Setter
 public class UserRequestDTO implements Serializable {
-    @NotBlank(message = "First name is required")
+
+    @NotBlank(message = "firstName must be not blank") // Khong cho phep gia tri blank
     private String firstName;
-    @NotNull(message = "Last name is required")
+
+    @NotNull(message = "lastName must be not null") // Khong cho phep gia tri null
     private String lastName;
-    @Email(message = "Email is invalid")
+
+    @Email(message = "email invalid format") // Chi chap nhan nhung gia tri dung dinh dang email
     private String email;
-//    @Pattern(regexp = "^\\d{9,10}$", message = "Phone is invalid")
-    @PhoneNumber
+
+    //@Pattern(regexp = "^\\d{10}$", message = "phone invalid format")
+    @PhoneNumber(message = "phone invalid format")
     private String phone;
 
-    @NotNull(message = "Date of birth is required")
+    @NotNull(message = "dateOfBirth must be not null")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(pattern = "MM/dd/yyyy")
     private Date dateOfBirth;
 
-    /**
-     * – Ưu điểm của phương pháp này là chúng ta có thể áp dụng chung cho tất cả các enum khác nhau:
-     */
-    @EnumPattern(name = "status", regexp = "ACTIVE|INACTIVE|NONE")
-    private UserStatus status;
-
-    /**
-     * – Ưu điểm của phương pháp này là chúng ta có thể chỉ định cụ thể một vài giá trị cần validate trong enum thay vì tất cả.
-     */
-    @GenderSubset(anyOf = {Gender.MALE, Gender.FEMALE, Gender.OTHER})
+    //@Pattern(regexp = "^male|female|other$", message = "gender must be one in {male, female, other}")
+    @GenderSubset(anyOf = {MALE, FEMALE, OTHER})
     private Gender gender;
-
-    /**
-     * – Ưu điểm của phương pháp này là có thể áp dụng chung cho tất cả enum và dễ dàng handle exception.
-     */
-    @NotNull(message = "type must be not null")
-    @EnumValue(name = "type", enumClass = UserType.class)
-    private String type;
 
     @NotNull(message = "username must be not null")
     private String username;
@@ -58,31 +52,20 @@ public class UserRequestDTO implements Serializable {
     @NotNull(message = "password must be not null")
     private String password;
 
-    @NotEmpty(message = "Address must be not empty")
-    private Set<Address> addresses;
-    public UserRequestDTO() {
-    }
+    @NotNull(message = "type must be not null")
+    @EnumValue(name = "type", enumClass = UserType.class)
+    private String type;
+
+    @EnumPattern(name = "status", regexp = "ACTIVE|INACTIVE|NONE")
+    private UserStatus status;
+
+    @NotEmpty(message = "addresses can not empty")
+    private Set<AddressDTO> addresses;
 
     public UserRequestDTO(String firstName, String lastName, String email, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;
-    }
-
-
-
-    @Getter
-    public static class Address {
-        private String apartmentNumber;
-        private String floor;
-        private String building;
-        private String streetNumber;
-        private String street;
-        private String city;
-        private String country;
-        private Integer addressType;
-
-
     }
 }

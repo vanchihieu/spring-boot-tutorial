@@ -1,6 +1,20 @@
 spring:
   application:
     name: restfull-java-app
+  profiles:
+    active: @spring.profiles.active@
+  datasource:
+    url: jdbc:mysql://localhost:3306/tayjava
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: update
 
 openapi:
   service:
@@ -8,3 +22,33 @@ openapi:
     server: http://localhost:8080
     title: API Service
     version: 1.0.0
+
+## Health check
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+#  endpoint:
+#    health:
+#      probes:
+#        enabled: true
+#  health: # config for EKS
+#    livenessState:
+#      enabled: true
+#    readinessState:
+#      enabled: true
+#  prometheus:
+#    metrics:
+#      export:
+#        step: 5s
+#        enabled: true
+#
+## Logging
+#logging:
+#  level:
+#    root: INFO
+#    web: OFF
+#    org.springframework: INFO
+#    org.apache: OFF
+#    kafka: OFF

@@ -1,21 +1,20 @@
 package vn.java.demorestfulapi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.java.demorestfulapi.configuration.Translator;
 import vn.java.demorestfulapi.dto.request.UserRequestDTO;
-import vn.java.demorestfulapi.dto.response.ResponseData;
-import vn.java.demorestfulapi.dto.response.ResponseSuccess;
+import vn.java.demorestfulapi.dto.request.UserRequestDTO1;
+import vn.java.demorestfulapi.dto.response.*;
+import vn.java.demorestfulapi.service.UserService;
+import vn.java.demorestfulapi.util.UserStatus;
 
 import java.util.List;
 
@@ -24,7 +23,11 @@ import java.util.List;
 @Validated
 @Slf4j
 @Tag(name = "User Controller")
+@RequiredArgsConstructor
 public class UserController {
+    private final UserService userService;
+
+    private static final String ERROR_MESSAGE = "errorMessage={}";
 
 
     //    @RequestMapping(path = "/", method = RequestMethod.POST, headers = "apiKey=v1.0")
@@ -45,58 +48,105 @@ public class UserController {
 //    })
     @Operation(method = "POST", summary = "Add new user", description = "Send a request via this API to create new user")
     @PostMapping(value = "/")
-    public ResponseData<Integer> addUser(@Valid @RequestBody UserRequestDTO userDTO) {
-        log.info("Request add user, {} {}", userDTO.getFirstName(), userDTO.getLastName());
-//        return new ResponseSuccess(HttpStatus.CREATED, "Add user success", userDTO);
-        return new ResponseData<>(HttpStatus.CREATED.value(), Translator.toLocale("user.add.success"), 1);
+    public ResponseData<Long> addUser(@Valid @RequestBody UserRequestDTO request) {
+        log.info("Request add user, {} {}", request.getFirstName(), request.getLastName());
+        try {
+            long userId = userService.saveUser(request);
+            return new ResponseData<>(HttpStatus.CREATED.value(), Translator.toLocale("user.add.success"), userId);
+        } catch (Exception e) {
+            return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Add user fail");
+        }
     }
 
     @Operation(summary = "Update user", description = "Send a request via this API to update user")
     @PutMapping("/{userId}")
-    public ResponseData<?> updateUser(@PathVariable int userId, @Valid @RequestBody UserRequestDTO userDTO) {
-        System.out.println("Update user with id: " + userId);
-        return new ResponseData<>(HttpStatus.ACCEPTED.value(), Translator.toLocale("user.upd.success"));
-//        return new ResponseSuccess(HttpStatus.ACCEPTED, "Update user success");
+    public ResponseData<Void> updateUser(@PathVariable int userId, @Valid @RequestBody UserRequestDTO request) {
+        log.info("Request update userId={}", userId);
+
+        try {
+            userService.updateUser(userId, request);
+            return new ResponseData<>(HttpStatus.ACCEPTED.value(), Translator.toLocale("user.upd.success"));
+        } catch (Exception e) {
+            log.error(ERROR_MESSAGE, e.getMessage(), e.getCause());
+            return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Update user fail");
+        }
     }
+
     @Operation(summary = "Change status of user", description = "Send a request via this API to change status of user")
     @PatchMapping("/{userId}")
-    public ResponseData<Integer> changeStatus(@Min(value = 1, message = "userId must be greater than 0") @PathVariable int userId, @RequestParam(required = false) boolean status) {
-        log.info("Request update userId={}", userId);
-        return new ResponseData<>(HttpStatus.ACCEPTED.value(), Translator.toLocale("user.change.success"), userId);
-//        return new ResponseSuccess(HttpStatus.ACCEPTED, "Change status user success");
+    public ResponseData<Void> changeStatus(@Min(value = 1, message = "userId must be greater than 0") @PathVariable int userId, @RequestParam(required = false) UserStatus status) {
+        log.info("Request change status, userId={}", userId);
+
+        try {
+            userService.changeStatus(userId, status);
+            return new ResponseData<>(HttpStatus.ACCEPTED.value(), Translator.toLocale("user.change.success"));
+        } catch (Exception e) {
+            log.error(ERROR_MESSAGE, e.getMessage(), e.getCause());
+            return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Change status fail");
+        }
     }
+
     @Operation(summary = "Delete user permanently", description = "Send a request via this API to delete user permanently")
     @DeleteMapping("/{userId}")
-    public ResponseSuccess deleteUser(@PathVariable int userId) {
-        System.out.println("Delete user with id: " + userId);
-        return new ResponseSuccess(HttpStatus.NO_CONTENT, Translator.toLocale("user.del.success"));
+    public ResponseData<Void> deleteUser(@PathVariable int userId) {
+        log.info("Request delete userId={}", userId);
+
+        try {
+            userService.deleteUser(userId);
+            return new ResponseData<>(HttpStatus.NO_CONTENT.value(), Translator.toLocale("user.del.success"));
+        } catch (Exception e) {
+            log.error(ERROR_MESSAGE, e.getMessage(), e.getCause());
+            return new ResponseError(HttpStatus.BAD_REQUEST.value(), "Delete user fail");
+        }
     }
 
     @Operation(summary = "Get user detail", description = "Send a request via this API to get user information")
     @GetMapping("/{userId}")
-    public ResponseData<UserRequestDTO> getUser(@PathVariable int userId) {
-        UserRequestDTO userDTO = new UserRequestDTO();
-        userDTO.setFirstName("Van");
-        userDTO.setLastName("Chi Hieu");
-        userDTO.setEmail("hieu@gmail.com");
-        userDTO.setPhone("0123456789");
-
+    public ResponseData<UserDetailResponse> getUser(@PathVariable int userId) {
         log.info("Request get user detail, userId={}", userId);
-        return new ResponseData<>(HttpStatus.OK.value(), "Get user success", userDTO);
-//        return new ResponseSuccess(HttpStatus.OK, "Get user success", userDTO);
+
+        try {
+            UserDetailResponse user = userService.getUser(userId);
+            return new ResponseData<>(HttpStatus.OK.value(), "user", user);
+        } catch (Exception e) {
+            log.error(ERROR_MESSAGE, e.getMessage(), e.getCause());
+            return new ResponseError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
     }
 
     @Operation(summary = "Get list of users per pageNo", description = "Send a request via this API to get user list by pageNo and pageSize")
     @GetMapping("/list")
-    public ResponseData<List<UserRequestDTO>> getAllUser(
+    public ResponseData<PageResponse> getAllUser(
             @RequestParam(defaultValue = "0", required = false) int pageNo,
-            @Min(10) @RequestParam(defaultValue = "20", required = false) int pageSize) {
-        log.info("Request get all of users");
+            @Min(10) @RequestParam(defaultValue = "20", required = false) int pageSize,
+            @RequestParam(required = false) String sortBy) {
+        log.info("Request get user list, pageNo={}, pageSize={}", pageNo, pageSize);
 
-        return new ResponseData<>(HttpStatus.OK.value(), "Get all user success",
-                List.of(
-                        new UserRequestDTO("Van", "Chi Hieu", "hieu@gmail.com", "0123456789"),
-                        new UserRequestDTO("Van", "Chi Tam", "tam@gmail.com", "0123456782")
-                ));
+        try {
+            PageResponse<?> users = userService.getAllUsersWithSortBy(pageNo, pageSize, sortBy);
+            return new ResponseData<>(HttpStatus.OK.value(), "users", users);
+        } catch (Exception e) {
+            log.error(ERROR_MESSAGE, e.getMessage(), e.getCause());
+            return new ResponseError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Get list of users with sort by multiple columns", description = "Send a request via this API to get user list by pageNo, pageSize and sort by multiple column")
+    @GetMapping("/list-with-sort-by-multiple-columns")
+    public ResponseData<?> getAllUsersWithSortByMultipleColumns(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                                @RequestParam(defaultValue = "20", required = false) int pageSize,
+                                                                @RequestParam(required = false) String... sorts) {
+        log.info("Request get all of users with sort by multiple columns");
+        return new ResponseData<>(HttpStatus.OK.value(), "users", userService.getAllUsersWithSortByMultipleColumns(pageNo, pageSize, sorts));
+    }
+
+    @Operation(summary = "Get list of users and search with paging and sorting by customize query", description = "Send a request via this API to get user list by pageNo, pageSize and sort by multiple column")
+    @GetMapping("/list-user-and-search-with-paging-and-sorting")
+    public ResponseData<?> getAllUsersAndSearchWithPagingAndSorting(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                                    @RequestParam(defaultValue = "20", required = false) int pageSize,
+                                                                    @RequestParam(required = false) String search,
+                                                                    @RequestParam(required = false) String sortBy) {
+        log.info("Request get list of users and search with paging and sorting");
+        return new ResponseData<>(HttpStatus.OK.value(), "users", userService.getAllUsersAndSearchWithPagingAndSorting(pageNo, pageSize, search, sortBy));
     }
 }
