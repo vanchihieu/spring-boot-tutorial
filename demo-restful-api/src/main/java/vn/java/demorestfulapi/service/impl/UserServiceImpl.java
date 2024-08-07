@@ -234,30 +234,30 @@ public class UserServiceImpl implements UserService {
         return searchRepository.searchUserByCriteria(pageNo, pageSize, sortBy, address, search);
     }
 
-    @Override
-    public PageResponse<?> advanceSearchWithSpecifications(Pageable pageable, String[] user, String[] address) {
-        log.info("getUsersBySpecifications");
-
-        if (user != null && address != null) {
-            return searchRepository.searchUserByCriteriaWithJoin(pageable, user, address);
-        } else if (user != null) {
-            UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
-
-            Pattern pattern = Pattern.compile(SEARCH_SPEC_OPERATOR);
-            for (String s : user) {
-                Matcher matcher = pattern.matcher(s);
-                if (matcher.find()) {
-                    builder.with(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));
-                }
-            }
-
-            Page<User> users = userRepository.findAll(Objects.requireNonNull(builder.build()), pageable);
-
-            return convertToPageResponse(users, pageable);
-        }
-
-        return convertToPageResponse(userRepository.findAll(pageable), pageable);
-    }
+//    @Override
+//    public PageResponse<?> advanceSearchWithSpecifications(Pageable pageable, String[] user, String[] address) {
+//        log.info("getUsersBySpecifications");
+//
+//        if (user != null && address != null) {
+//            return searchRepository.searchUserByCriteriaWithJoin(pageable, user, address);
+//        } else if (user != null) {
+//            UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
+//
+//            Pattern pattern = Pattern.compile(SEARCH_SPEC_OPERATOR);
+//            for (String s : user) {
+//                Matcher matcher = pattern.matcher(s);
+//                if (matcher.find()) {
+//                    builder.with(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));
+//                }
+//            }
+//
+//            Page<User> users = userRepository.findAll(Objects.requireNonNull(builder.build()), pageable);
+//
+//            return convertToPageResponse(users, pageable);
+//        }
+//
+//        return convertToPageResponse(userRepository.findAll(pageable), pageable);
+//    }
 
     /**
      * Get user by userId

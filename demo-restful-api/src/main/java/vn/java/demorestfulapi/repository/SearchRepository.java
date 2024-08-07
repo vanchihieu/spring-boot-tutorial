@@ -179,6 +179,8 @@ public class SearchRepository {
         if (StringUtils.hasLength(address)) {
             Join<Address, User> userAddressJoin = userRoot.join("addresses");
             Predicate addressPredicate = criteriaBuilder.equal(userAddressJoin.get("city"), address);
+            // Tìm kiếm theo tất cả các field của address
+
             query.where(userPredicate, addressPredicate);
         } else {
             criteriaList.forEach(searchConsumer);
