@@ -6,17 +6,18 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vn.java.demorestfulapi.configuration.Translator;
 import vn.java.demorestfulapi.dto.request.UserRequestDTO;
-import vn.java.demorestfulapi.dto.request.UserRequestDTO1;
 import vn.java.demorestfulapi.dto.response.*;
 import vn.java.demorestfulapi.service.UserService;
 import vn.java.demorestfulapi.util.UserStatus;
 
-import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/user")
@@ -159,5 +160,13 @@ public class UserController {
                                                      @RequestParam(defaultValue = "") String... search) {
         log.info("Request advance search query by criteria");
         return new ResponseData<>(HttpStatus.OK.value(), "users", userService.advanceSearchWithCriteria(pageNo, pageSize, sortBy, address, search));
+    }
+
+    @Operation(summary = "Advance search query by specifications", description = "Return list of users")
+    @GetMapping(path = "/advance-search-with-specification", produces = APPLICATION_JSON_VALUE)
+    public ResponseData<?> advanceSearchWithSpecifications(Pageable pageable,
+                                                           @RequestParam(required = false) String[] user,
+                                                           @RequestParam(required = false) String[] address) {
+        return new ResponseData<>(HttpStatus.OK.value(), "users", userService.advanceSearchWithSpecifications(pageable, user, address));
     }
 }
