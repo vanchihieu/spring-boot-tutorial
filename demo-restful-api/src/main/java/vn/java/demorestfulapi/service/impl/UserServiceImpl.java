@@ -238,8 +238,9 @@ public class UserServiceImpl implements UserService {
             // tìm kiếm user theo user -> sử dụng user table
             UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
 
-            Pattern pattern = Pattern.compile(SEARCH_SPEC_OPERATOR);
             for (String s : user) {
+                Pattern pattern = Pattern.compile(SEARCH_SPEC_OPERATOR);
+
                 Matcher matcher = pattern.matcher(s);
                 if (matcher.find()) {
                     builder.with(matcher.group(1), matcher.group(2), matcher.group(4), matcher.group(3), matcher.group(5));

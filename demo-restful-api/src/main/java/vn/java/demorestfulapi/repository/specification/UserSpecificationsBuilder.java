@@ -31,9 +31,9 @@ public final class UserSpecificationsBuilder {
                 if (startWithAsterisk && endWithAsterisk) {
                     searchOperation = CONTAINS;
                 } else if (startWithAsterisk) {
-                    searchOperation = ENDS_WITH;
+                    searchOperation = ENDS_WITH; // vd: name=*John
                 } else if (endWithAsterisk) {
-                    searchOperation = STARTS_WITH;
+                    searchOperation = STARTS_WITH; // vd: name=John*
                 }
             }
             params.add(new SpecSearchCriteria(orPredicate, key, searchOperation, value));

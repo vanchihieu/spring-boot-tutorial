@@ -119,7 +119,7 @@ public class UserController {
     @GetMapping("/list")
     public ResponseData<PageResponse> getAllUser(
             @RequestParam(defaultValue = "0", required = false) int pageNo,
-            @Min(10) @RequestParam(defaultValue = "20", required = false) int pageSize,
+            @Min(2) @RequestParam(defaultValue = "20", required = false) int pageSize,
             @RequestParam(required = false) String sortBy) {
         log.info("Request get user list, pageNo={}, pageSize={}", pageNo, pageSize);
 

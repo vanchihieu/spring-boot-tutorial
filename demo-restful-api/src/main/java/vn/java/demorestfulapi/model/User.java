@@ -20,7 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "tbl_user")
-public class User extends AbstractEntity {
+public class User extends AbstractEntity<Long> {
 
     @Column(name = "first_name")
     private String firstName;
@@ -66,6 +66,12 @@ public class User extends AbstractEntity {
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private Set<Address> addresses = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserHasRole> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<GroupHasUser> groups = new HashSet<>();
 
     public void saveAddress(Address address) {
         if (address != null) {

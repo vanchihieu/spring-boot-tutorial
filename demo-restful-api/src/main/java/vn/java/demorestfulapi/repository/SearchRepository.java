@@ -51,6 +51,8 @@ public class SearchRepository {
         log.info("Execute search user with keyword={}", search);
 
         StringBuilder sqlQuery = new StringBuilder("SELECT new vn.java.demorestfulapi.dto.response.UserDetailResponse(u.id, u.firstName, u.lastName, u.phone, u.email) FROM User u WHERE 1=1");
+
+        // Search by keyword
         if (StringUtils.hasLength(search)) {
             sqlQuery.append(" AND lower(u.firstName) like lower(:firstName)");
             sqlQuery.append(" OR lower(u.lastName) like lower(:lastName)");
@@ -123,6 +125,7 @@ public class SearchRepository {
 
         List<SearchCriteria> criteriaList = new ArrayList<>();
 
+        // Search by keyword
         if (search.length > 0) {
             Pattern pattern = Pattern.compile(SEARCH_OPERATOR);
             for (String s : search) {
@@ -133,6 +136,7 @@ public class SearchRepository {
             }
         }
 
+        // Sort by
         if (StringUtils.hasLength(sortBy)) {
             Pattern pattern = Pattern.compile(SORT_BY);
             for (String s : search) {
@@ -177,7 +181,7 @@ public class SearchRepository {
         UserSearchQueryCriteriaConsumer searchConsumer = new UserSearchQueryCriteriaConsumer(userPredicate, criteriaBuilder, userRoot);
 
         if (StringUtils.hasLength(address)) {
-            Join<Address, User> userAddressJoin = userRoot.join("addresses");
+            Join<Address, User> userAddressJoin = userRoot.join("addresses"); // Join user with address table
             Predicate addressPredicate = criteriaBuilder.equal(userAddressJoin.get("city"), address);
             // Tìm kiếm theo tất cả các field của address
 

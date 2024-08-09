@@ -12,8 +12,8 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
-    @Query(value = "select * from User u inner join Address a on u.id = a.userId where a.city=:city")
-    List<User> getAllUser(String city);
+//    @Query(value = "select * from User u inner join Address a on u.id = a.userId where a.city=:city")
+//    List<User> getAllUser(String city);
 
     // -- Distinct --
     // @Query(value = "select distinct from User u where u.firstName=:firstName and u.lastName=:lastName")
@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     // -- OR --
     //  @Query(value = "select * from User u where u.firstName=:name or u.lastName:name")
-    List<User> findByFirstNameOrLastName(String name);
+    List<User> findByFirstNameOrLastName(String firstName, String lastName);
 
     // -- Is, Equals --
     //@Query(value = "select * from User u where u.firstName=:name")
@@ -42,9 +42,9 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     // LessThan
     //@Query(value = "select * from User u where u.age < :age")
     List<User> findByAgeLessThan(int age);
-    List<User> findByAgeLessThanEquals();
-    List<User> findByAgeGreaterThan();
-    List<User> findByAgeGreaterThanEquals();
+    List<User> findByAgeLessThanEqual(int age);
+    List<User> findByAgeGreaterThan(int age);
+    List<User> findByAgeGreaterThanEqual(int age);
 
     // Before va After
     //@Query(value = "select * from User u where u.createdAt < :date")
