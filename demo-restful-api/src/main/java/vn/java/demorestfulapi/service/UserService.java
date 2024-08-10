@@ -1,6 +1,7 @@
 package vn.java.demorestfulapi.service;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import vn.java.demorestfulapi.dto.request.UserRequestDTO;
 import vn.java.demorestfulapi.dto.response.PageResponse;
 import vn.java.demorestfulapi.dto.response.UserDetailResponse;
@@ -15,6 +16,8 @@ public interface UserService {
     void changeStatus(long userId, UserStatus status);
 
     void deleteUser(long userId);
+
+    UserDetailsService userDetailsService();
 
     UserDetailResponse getUser(long userId);
 

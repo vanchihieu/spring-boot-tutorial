@@ -9,9 +9,17 @@ import vn.java.demorestfulapi.model.User;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findByUsername(String username);
+
+    @Query(value = "select r from Role r inner join UserHasRole ur on r.id = ur.user.id where ur.id = :userId")
+    List<User> findAllRolesByUserId(Long userId);
+
 //    @Query(value = "select * from User u inner join Address a on u.id = a.userId where a.city=:city")
 //    List<User> getAllUser(String city);
 
@@ -21,7 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     // -- Single field --
     //  @Query(value = "select * from User u where u.email= ?1")
-    List<User> findByEmail(String email);
+//    List<User> findByEmail(String email);
 
     // -- OR --
     //  @Query(value = "select * from User u where u.firstName=:name or u.lastName:name")
