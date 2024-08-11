@@ -23,6 +23,12 @@ openapi:
     title: API Service
     version: 1.0.0
 
+jwt:
+  expiryHour: 1
+  expiryDay: 14
+  accessKey: c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=
+  refreshKey: 9k1jJAWAKQCnCEz1pwcPNegbHoLugf9hgEnn6sz5pFc=
+
 ## Health check
 #management:
 #  endpoints:

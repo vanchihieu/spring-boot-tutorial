@@ -21,6 +21,7 @@ import vn.java.demorestfulapi.service.UserService;
 import java.io.IOException;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static vn.java.demorestfulapi.util.TokenType.ACCESS_TOKEN;
 
 @Slf4j
 @Component
@@ -41,21 +42,23 @@ public class PreFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
         log.debug("------------- PreFilter -------------");
 
-        final String authHeader = request.getHeader(AUTHORIZATION); // Lấy giá trị của header Authorization từ yêu cầu HTTP. Đây thường là nơi chứa JWT.
+        final String authorization = request.getHeader(AUTHORIZATION); // Lấy giá trị của header Authorization từ yêu cầu HTTP. Đây thường là nơi chứa JWT.
         /*
             * Kiểm tra xem header Authorization có giá trị không hoặc không bắt đầu bằng "Bearer " không.
             * Nếu không thì bỏ qua và chuyển tiếp yêu cầu đến Filter tiếp theo.
          */
-        if (StringUtils.isEmpty(authHeader) || !StringUtils.startsWith(authHeader, "Bearer ")) {
+        if (StringUtils.isBlank(authorization) || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwt = authHeader.substring(7); // Cắt bỏ phần tiền tố "Bearer " để lấy JWT thực tế từ header Authorization.
-        final String userName = jwtService.extractUserName(jwt);
+        final String token = authorization.substring("Bearer ".length()); // Cắt bỏ phần tiền tố "Bearer " để lấy JWT thực tế từ header Authorization.
+        final String userName = jwtService.extractUsername(token, ACCESS_TOKEN);
+
 
         /**
          * Kiểm tra xem userName có giá trị không và người dùng chưa được xác thực không.
@@ -66,7 +69,7 @@ public class PreFilter extends OncePerRequestFilter {
          */
         if (StringUtils.isNotEmpty(userName) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userName);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+            if (jwtService.isValid(token, ACCESS_TOKEN, userDetails)) {
                 SecurityContext context = SecurityContextHolder.createEmptyContext(); // Tạo một SecurityContext trống để lưu trữ thông tin xác thực mới.
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities()); // Tạo một đối tượng UsernamePasswordAuthenticationToken để chứa thông tin xác thực của người dùng. Thông tin này bao gồm thông tin người dùng (userDetails), không có mật khẩu (null), và các quyền hạn (authorities) của người dùng.
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

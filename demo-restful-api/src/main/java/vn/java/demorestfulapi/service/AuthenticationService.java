@@ -17,7 +17,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     /**
-     * Sign in the system
+     * Phương thức signIn xử lý quy trình đăng nhập của người dùng như sau:
+     * - Xác thực thông tin đăng nhập bằng authenticationManager.
+     * - Tìm kiếm người dùng trong cơ sở dữ liệu sau khi xác thực thành công.
+     * - Nếu người dùng tồn tại, tạo một JWT sử dụng jwtService.
+     * - Trả về SignInResponse chứa JWT (accessToken), cùng với các thông tin khác như refreshToken, userId, phoneNumber, và role.
      * @param request
      * @return
      */
