@@ -18,6 +18,8 @@ import vn.java.demorestfulapi.dto.response.SignInResponse;
 import vn.java.demorestfulapi.dto.response.TokenResponse;
 import vn.java.demorestfulapi.service.AuthenticationService;
 
+import static org.springframework.http.HttpStatus.OK;
+
 @Slf4j
 @Validated
 @RestController

@@ -12,10 +12,7 @@ import vn.java.demorestfulapi.util.Gender;
 import vn.java.demorestfulapi.util.UserStatus;
 import vn.java.demorestfulapi.util.UserType;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Getter
@@ -89,7 +86,8 @@ public class User extends AbstractEntity<Long> implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(u -> new SimpleGrantedAuthority(u.getRole().getName())).toList();
+//        return roles.stream().map(u -> new SimpleGrantedAuthority(u.getRole().getName())).toList();
+        return List.of();
     }
 
     @Override

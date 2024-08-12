@@ -45,6 +45,17 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
+    @Override
+    public User getByUsername(String userName) {
+        return userRepository.findByUsername(userName).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+
+//    @Override
+//    public List<String> findAllRolesByUserId(long userId) {
+//        return userRepository.findAllRolesByUserId(userId);
+//    }
+
     /**
      * Save new user to DB
      *

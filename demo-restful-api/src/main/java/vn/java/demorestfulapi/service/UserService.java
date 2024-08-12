@@ -5,9 +5,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import vn.java.demorestfulapi.dto.request.UserRequestDTO;
 import vn.java.demorestfulapi.dto.response.PageResponse;
 import vn.java.demorestfulapi.dto.response.UserDetailResponse;
+import vn.java.demorestfulapi.model.User;
 import vn.java.demorestfulapi.util.UserStatus;
 
+import java.util.List;
+
 public interface UserService {
+    User getByUsername(String userName);
+//    List<String> findAllRolesByUserId(long userId);
 
     long saveUser(UserRequestDTO request);
 
