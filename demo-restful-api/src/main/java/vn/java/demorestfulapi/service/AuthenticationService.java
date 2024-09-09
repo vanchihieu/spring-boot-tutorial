@@ -60,7 +60,7 @@ public class AuthenticationService {
         log.info("---------- authenticate ----------");
 
         var user = userService.getByUsername(signInRequest.getUsername());
-
+        log.info("User: {}", user.getPassword());
 //        List<String> roles = userService.findAllRolesByUserId(user.getId());
 //        List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).toList();
 
@@ -68,6 +68,7 @@ public class AuthenticationService {
 
         // create new access token
         String accessToken = jwtService.generateToken(user);
+        log.info("AccessToken: {}", accessToken);
 
         // create new refresh token
         String refreshToken = jwtService.generateRefreshToken(user);

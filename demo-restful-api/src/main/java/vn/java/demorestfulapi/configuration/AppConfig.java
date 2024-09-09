@@ -33,6 +33,7 @@ public class AppConfig {
 
     /**
      * Cấu hình CORS (Cross-Origin Resource Sharing) cho ứng dụng Spring Boot. CORS là một cơ chế cho phép tài nguyên web từ một domain khác được yêu cầu từ domain hiện tại.
+     *
      * @return
      */
     @Bean
@@ -50,8 +51,24 @@ public class AppConfig {
         };
     }
 
+    @Bean
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(request -> request.requestMatchers("/auth/**").permitAll().anyRequest().authenticated())
+                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS)) // dùng STATELESS để không lưu session trong server
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(preFilter, UsernamePasswordAuthenticationFilter.class); // thêm preFilter vào trước UsernamePasswordAuthenticationFilter để xử lý token trước khi xác thực thông tin đăng nhập
+        return http.build();
+    }
+
     /**
      * Cấu hình Spring Security để bỏ qua các tài nguyên không cần xác thực.
+     *
      * @return
      */
     @Bean
@@ -62,12 +79,8 @@ public class AppConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> request.requestMatchers("/auth/**").permitAll().anyRequest().authenticated())
-                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS)) // dùng STATELESS để không lưu session trong server
-                .authenticationProvider(authenticationProvider()).addFilterBefore(preFilter, UsernamePasswordAuthenticationFilter.class); // thêm preFilter vào trước UsernamePasswordAuthenticationFilter để xử lý token trước khi xác thực thông tin đăng nhập
-        return http.build();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     @Bean
@@ -85,17 +98,9 @@ public class AppConfig {
          * PasswordEncoder là một interface được sử dụng để mã hóa mật khẩu (ví dụ: bằng cách sử dụng BCrypt) khi lưu trữ và kiểm tra mật khẩu trong quá trình xác thực.
          * passwordEncoder() có thể là một phương thức khác trong cấu hình của bạn, tạo ra một đối tượng PasswordEncoder, chẳng hạn như BCryptPasswordEncoder.
          */
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(getPasswordEncoder());
         return authProvider;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
 }

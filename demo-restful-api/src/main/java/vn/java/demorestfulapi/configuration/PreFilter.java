@@ -47,6 +47,7 @@ public class PreFilter extends OncePerRequestFilter {
         log.debug("------------- PreFilter -------------");
 
         final String authorization = request.getHeader(AUTHORIZATION); // Lấy giá trị của header Authorization từ yêu cầu HTTP. Đây thường là nơi chứa JWT.
+        log.info("Authorization: {}", authorization);
         /*
             * Kiểm tra xem header Authorization có giá trị không hoặc không bắt đầu bằng "Bearer " không.
             * Nếu không thì bỏ qua và chuyển tiếp yêu cầu đến Filter tiếp theo.
@@ -59,6 +60,8 @@ public class PreFilter extends OncePerRequestFilter {
         final String token = authorization.substring("Bearer ".length()); // Cắt bỏ phần tiền tố "Bearer " để lấy JWT thực tế từ header Authorization.
         final String userName = jwtService.extractUsername(token, ACCESS_TOKEN);
 
+        log.info("Token: {}", token);
+        log.info("Username: {}", userName);
 
         /**
          * Kiểm tra xem userName có giá trị không và người dùng chưa được xác thực không.
