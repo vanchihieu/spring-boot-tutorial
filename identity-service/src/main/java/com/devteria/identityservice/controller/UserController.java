@@ -28,12 +28,12 @@ public class UserController {
     }
 
     @GetMapping
-    List<User> getUsers(){
+    List<UserResponse > getUsers(){
         return userService.getUsers();
     }
 
     @GetMapping("/{userId}")
-    User getUser(@PathVariable("userId") String userId){
+    UserResponse  getUser(@PathVariable("userId") String userId){
         return userService.getUser(userId);
     }
 
