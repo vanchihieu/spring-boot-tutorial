@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,5 +25,6 @@ public class User {
     String firstName;
     String lastName;
     LocalDate dob;
-    Set<String> roles;
+
+    List<String> roles;
 }
