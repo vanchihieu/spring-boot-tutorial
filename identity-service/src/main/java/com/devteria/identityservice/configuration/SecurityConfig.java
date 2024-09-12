@@ -39,7 +39,8 @@ public class SecurityConfig {
 
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // Đoạn mã này đăng ký JwtAuthenticationEntryPoint với Spring Security. JwtAuthenticationEntryPoint sẽ được sử dụng khi người dùng gửi một yêu cầu mà không có JWT hợp lệ hoặc không cung cấp JWT. (lỗi 401)
         );
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
