@@ -4,6 +4,7 @@ import com.devteria.identityservice.dto.request.UserCreationRequest;
 import com.devteria.identityservice.dto.response.UserResponse;
 import com.devteria.identityservice.entity.User;
 import com.devteria.identityservice.exception.AppException;
+import com.devteria.identityservice.exception.ErrorCode;
 import com.devteria.identityservice.repository.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,9 +13,13 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -89,5 +94,58 @@ public class UserServiceTest {
         // THEN
         Assertions.assertThat(exception.getErrorCode().getCode())
                 .isEqualTo(1002);
+    }
+
+    @Test
+    void getMyInfo_userExists_returnsUserResponse() {
+        // Given
+        User user = User.builder()
+                .id("cf0600f538b3")
+                .username("john")
+                .firstName("John")
+                .lastName("Doe")
+                .dob(dob)
+                .build();
+
+        UserResponse expectedResponse = UserResponse.builder()
+                .id("cf0600f538b3")
+                .username("john")
+                .firstName("John")
+                .lastName("Doe")
+                .dob(dob)
+                .build();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("john");
+        SecurityContextHolder.setContext(securityContext);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+//        when(userMapper.toUserResponse(any(User.class))).thenReturn(expectedResponse);
+
+        // When
+        UserResponse actualResponse = userService.getMyInfo();
+
+        // Then
+        Assertions.assertThat(actualResponse).isEqualTo(expectedResponse);
+    }
+
+    @Test
+    void getMyInfo_userDoesNotExist_throwsAppException() {
+        // Given
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("john");
+        SecurityContextHolder.setContext(securityContext);
+
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+
+        // When
+        var exception = assertThrows(AppException.class, () -> userService.getMyInfo());
+
+        // Then
+        Assertions.assertThat(exception.getErrorCode().getCode()).isEqualTo(ErrorCode.USER_NOT_EXISTED.getCode());
     }
 }
