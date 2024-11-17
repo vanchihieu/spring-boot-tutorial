@@ -37,8 +37,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder) // Đoạn mã này đăng ký CustomJwtDecoder với Spring Security. CustomJwtDecoder sẽ được sử dụng để giải mã JWT trong các yêu cầu đến các API. (lỗi 403)
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())) // Đoạn mã này đăng ký JwtAuthenticationConverter với Spring Security. JwtAuthenticationConverter sẽ được sử dụng để chuyển đổi JWT thành một đối tượng Authentication. (lỗi 403)
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // Đoạn mã này đăng ký JwtAuthenticationEntryPoint với Spring Security. JwtAuthenticationEntryPoint sẽ được sử dụng khi người dùng gửi một yêu cầu mà không có JWT hợp lệ hoặc không cung cấp JWT. (lỗi 401)
         );
 

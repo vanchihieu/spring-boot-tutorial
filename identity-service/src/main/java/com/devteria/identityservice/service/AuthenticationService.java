@@ -80,6 +80,7 @@ public class AuthenticationService {
 
         if (!authenticated)
             throw new AppException(ErrorCode.UNAUTHENTICATED);
+
         var token = generateToken(user);
 
         return AuthenticationResponse.builder()
@@ -192,6 +193,7 @@ public class AuthenticationService {
                             .forEach(permission -> stringJoiner.add(permission.getName()));
             });
 
-        return stringJoiner.toString();
+        return stringJoiner.toString(); // vd: ROLE_ADMIN READ WRITE ROLE_USER VIEW
+
     }
 }
